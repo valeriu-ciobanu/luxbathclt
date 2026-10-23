@@ -135,7 +135,7 @@
           .then(function (r) { if (!r.ok) throw new Error(); done(); })
           .catch(function () {
             btn.disabled = false; btn.textContent = 'Request My Free Estimate';
-            alert('Sorry, something went wrong. Please call us at (206) 488-5351.');
+            alert('Sorry, something went wrong. Please email us at luxbathclt@gmail.com.');
           });
       } else {
         var lines = [];
@@ -159,7 +159,7 @@
   var atRoot = !/\/(our-work|services|contact|gallery|about)\/(index\.html)?$/.test(location.pathname);
   document.querySelectorAll('a[href]').forEach(function (a) {
     var h = a.getAttribute('href');
-    var m = h.match(/^(\.\.\/|\.\/)?(our-work|services|contact)?\/?(#.*)?$/);
+    var m = h.match(/^(\.\.\/|\.\/)?(about|our-work|services|contact)?\/?(#.*)?$/);
     if (!m || /^[a-z]+:/i.test(h) || h.charAt(0) === '#') return;
     var page = m[2], hash = m[3] || '';
     if (!page && !m[1]) return;
