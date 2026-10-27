@@ -585,3 +585,28 @@ a.card:hover .card-img img { transform: scale(1.04); }
   .page-hero-solid .container { padding-right: var(--gutter); }
   .page-hero-solid .hero-mark { height: 72%; right: -40px; opacity: .1; }
 }
+@media (min-width: 1021px) {
+  .filters:not(.filters-sub) { gap: 8px; flex-wrap: nowrap; }
+  .filters:not(.filters-sub) .chip { padding: 10px 14px; font-size: 12.5px; gap: 8px; white-space: nowrap; }
+}
+@media (min-width: 1021px) and (max-width: 1240px) {
+  .filters:not(.filters-sub) { flex-wrap: wrap; }
+}
+
+/* Header CTA beside the menu toggle (mobile) — replaces the sticky bottom bar */
+.mobile-bar { display: none !important; }
+body { padding-bottom: 0 !important; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.header-cta { display: none; }
+@media (max-width: 1020px) {
+  .header-cta { display: inline-flex; min-height: 48px; padding: 0 18px; font-size: 11.5px; letter-spacing: .1em; white-space: nowrap; }
+  .nav .btn { display: none; }
+}
+@media (max-width: 440px) {
+  .site-header .container { gap: 12px; }
+  .brand img { height: 34px; }
+  .header-actions { gap: 8px; }
+  .header-cta { padding: 0 12px; font-size: 10.5px; letter-spacing: .08em; }
+  .nav-toggle { width: 44px; height: 48px; }
+}
+@media (max-width: 359px) { .brand img { height: 30px; } .header-cta { padding: 0 10px; font-size: 10px; letter-spacing: .05em; } }

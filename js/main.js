@@ -51,7 +51,7 @@
     chips.forEach(function (chip) {
       chip.addEventListener('click', function () {
         group = chip.getAttribute('data-filter'); sub = 'all'; applyFilter();
-        var hash = { all: '', bath: 'bathrooms', kitchen: 'kitchens', builtin: 'built-ins', flooring: 'flooring' }[group];
+        var hash = { all: '', bath: 'bathrooms', kitchen: 'kitchens', builtin: 'built-ins', flooring: 'flooring', outdoor: 'outdoor', process: 'behind-the-tile' }[group];
         if (history.replaceState) history.replaceState(null, '', hash ? '#' + hash : location.pathname + location.search);
       });
     });
@@ -59,7 +59,7 @@
       chip.addEventListener('click', function () { sub = chip.getAttribute('data-sub'); applyFilter(); });
     });
     /* Deep links: our-work/#kitchens, #built-ins, #flooring, #bathrooms */
-    var fromHash = { bathrooms: 'bath', kitchens: 'kitchen', 'built-ins': 'builtin', flooring: 'flooring' }[location.hash.slice(1)];
+    var fromHash = { bathrooms: 'bath', kitchens: 'kitchen', 'built-ins': 'builtin', flooring: 'flooring', stairs: 'flooring', outdoor: 'outdoor', 'behind-the-tile': 'process' }[location.hash.slice(1)];
     if (fromHash) {
       group = fromHash; applyFilter();
       var filters = document.querySelector('.filters');
