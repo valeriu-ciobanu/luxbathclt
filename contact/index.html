@@ -306,7 +306,9 @@
 <section class="section on-stone">
   <div class="container contact-grid">
     <div class="form-card reveal">
-      <form class="estimate-form" data-endpoint="" novalidate>
+      <form class="estimate-form" data-endpoint="https://api.web3forms.com/submit" novalidate>
+        <input type="hidden" name="access_key" value="043ebd56-7609-47b9-a55e-b135fc966cd5">
+        <input type="hidden" name="from_name" value="LuxBath Website">
         <div class="form-grid">
           <div class="field"><label for="f-name">Full name</label><input id="f-name" name="Name" type="text" autocomplete="name" required><span class="err">Please enter your name.</span></div>
           <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="Phone" type="tel" autocomplete="tel" required><span class="err">Please enter a phone number.</span></div>
@@ -329,7 +331,8 @@
         <img class="ornament" src="../images/brand/monogram.svg" width="44" height="56" alt="" aria-hidden="true">
         <span class="eyebrow center">Thank you</span>
         <p class="h3">We'll be in touch shortly.</p>
-        <p class="muted">If your email app opened, just press send. We'll reply within one business day.</p>
+        <p class="muted">Your request has been sent. We'll reply within one business day.</p>
+        <p class="muted success-email-note" hidden>Your email app should have opened with your details. Just press send.</p>
       </div>
     </div>
     <aside class="info-block reveal" aria-label="Contact details">

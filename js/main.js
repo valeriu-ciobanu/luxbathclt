@@ -133,9 +133,9 @@
   }
 
   /* Estimate form
-     To receive submissions directly, set data-endpoint on the form to a form service URL
-     (for example a Formspree endpoint). Without one, the form opens the visitor's email app
-     with everything pre-filled, addressed to the business. */
+     Submissions go to Web3Forms (data-endpoint + hidden access_key on the form), which emails
+     them to the business. If that fails, or no endpoint is set, the form opens the visitor's
+     email app with everything pre-filled instead, so no lead is lost. */
   var form = document.querySelector('.estimate-form');
   if (form) {
     form.addEventListener('submit', function (e) {
@@ -151,31 +151,49 @@
       if (!ok) return;
 
       var data = new FormData(form);
-      track('generate_lead', {
-        form_name: 'estimate_request',
-        project_type: data.get('Project') || '',
-        timeline: data.get('Timeline') || '',
-        method: form.getAttribute('data-endpoint') ? 'form_service' : 'email_app'
-      });
       var endpoint = form.getAttribute('data-endpoint');
       var success = document.querySelector('.form-success');
-      function done() { form.hidden = true; success.classList.add('show'); success.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      var subject = 'New estimate request — ' + (data.get('Name') || '');
+      function done(method) {
+        track('generate_lead', {
+          form_name: 'estimate_request',
+          project_type: data.get('Project') || '',
+          timeline: data.get('Timeline') || '',
+          method: method
+        });
+        form.hidden = true; success.classList.add('show'); success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      /* Backup: open the visitor's email app with everything pre-filled */
+      function viaEmail() {
+        var lines = [];
+        data.forEach(function (v, k) { if (/^[A-Z]/.test(k) && v) lines.push(k + ': ' + v); });
+        window.location.href = 'mailto:luxbathclt@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines.join('\n'));
+        var note = success.querySelector('.success-email-note');
+        if (note) { note.hidden = false; note.previousElementSibling.hidden = true; }
+        done('email_app');
+      }
 
       if (endpoint) {
         var btn = form.querySelector('button[type="submit"]');
+        var label = btn.textContent;
         btn.disabled = true; btn.textContent = 'Sending…';
-        fetch(endpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } })
-          .then(function (r) { if (!r.ok) throw new Error(); done(); })
+        var payload = {};
+        data.forEach(function (v, k) { if (k !== 'company') payload[k] = v; });
+        payload.subject = subject;
+        payload.replyto = data.get('Email') || '';
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload)
+        })
+          .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || j.success === false) throw new Error(j.message || r.status); }); })
+          .then(function () { done('form_service'); })
           .catch(function () {
-            btn.disabled = false; btn.textContent = 'Request My Free Estimate';
-            alert('Sorry, something went wrong. Please email us at luxbathclt@gmail.com.');
+            btn.disabled = false; btn.textContent = label;
+            viaEmail();
           });
       } else {
-        var lines = [];
-        data.forEach(function (v, k) { if (k !== 'company' && v) lines.push(k + ': ' + v); });
-        var subject = 'Free estimate request — ' + (data.get('Name') || '');
-        window.location.href = 'mailto:luxbathclt@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines.join('\n'));
-        done();
+        viaEmail();
       }
     });
     form.querySelectorAll('[required]').forEach(function (inp) {
