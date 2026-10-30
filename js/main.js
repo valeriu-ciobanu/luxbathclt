@@ -28,6 +28,33 @@
     reveals.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* Google Analytics events */
+  function track(name, params) {
+    if (typeof window.gtag === 'function') {
+      params = params || {};
+      params.transport_type = 'beacon';
+      window.gtag('event', name, params);
+    }
+  }
+  function where(el) {
+    if (el.closest('.site-header')) return 'header';
+    if (el.closest('.site-footer, footer')) return 'footer';
+    if (el.closest('.hero')) return 'hero';
+    if (el.closest('.cta-band')) return 'cta_band';
+    var s = el.closest('section');
+    return s && s.id ? s.id : 'body';
+  }
+  /* Every button that leads to the consultation/contact page */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a.btn[href]');
+    if (!a || !/(^|\/)contact(\/|\.html)?(#.*)?$/.test(a.getAttribute('href'))) return;
+    track('consultation_click', {
+      button_text: a.textContent.trim().replace(/\s+/g, ' '),
+      button_location: where(a),
+      page_path: location.pathname
+    });
+  });
+
   /* Year */
   document.querySelectorAll('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
 
@@ -124,6 +151,12 @@
       if (!ok) return;
 
       var data = new FormData(form);
+      track('generate_lead', {
+        form_name: 'estimate_request',
+        project_type: data.get('Project') || '',
+        timeline: data.get('Timeline') || '',
+        method: form.getAttribute('data-endpoint') ? 'form_service' : 'email_app'
+      });
       var endpoint = form.getAttribute('data-endpoint');
       var success = document.querySelector('.form-success');
       function done() { form.hidden = true; success.classList.add('show'); success.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
